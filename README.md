@@ -442,6 +442,8 @@ To learn more about making a contribution to Pytorch, please see our [Contributi
 
 ## The Team
 
+PyTorch_For_PoorGuys is a Hack version of PyTorch and now maintained by [UEFI-code](https://github.com/UEFI-code).
+
 PyTorch is a community-driven project with several skillful engineers and researchers contributing to it.
 
 PyTorch is currently maintained by [Adam Paszke](https://apaszke.github.io/), [Sam Gross](https://github.com/colesbury), [Soumith Chintala](http://soumith.ch) and [Gregory Chanan](https://github.com/gchanan) with major contributions coming from hundreds of talented individuals in various forms and means.
