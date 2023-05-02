@@ -223,9 +223,9 @@ conda install mkl mkl-include
 conda install -c conda-forge libuv=1.39
 ```
 
-#### Get the PyTorch Source
+#### Get the PyTorch_For_PoorGuys Source
 ```bash
-git clone --recursive https://github.com/pytorch/pytorch
+git clone --recursive https://github.com/UEFI-code/PyTorch_For_PoorGuys
 cd pytorch
 # if you are updating an existing checkout
 git submodule sync
