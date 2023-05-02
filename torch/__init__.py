@@ -15,6 +15,9 @@ import platform
 import textwrap
 import ctypes
 import inspect
+
+print('Hello from torch.__init__.py')
+
 if sys.version_info < (3,):
     raise Exception("Python 2 has reached end-of-life and is no longer supported by PyTorch.")
 

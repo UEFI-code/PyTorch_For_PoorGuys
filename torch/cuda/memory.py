@@ -59,6 +59,7 @@ def caching_allocator_alloc(size, device: Union[Device, int] = None, stream=None
         See :ref:`cuda-memory-management` for more details about GPU memory
         management.
     """
+    print('Script: ' + __file__ + ' Line: ' + str(ctypes.current_frame().f_lineno))
     if device is None:
         device = torch.cuda.current_device()
     device = _get_device_index(device)

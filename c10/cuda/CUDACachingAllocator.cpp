@@ -371,21 +371,20 @@ struct MempoolIdHash {
 };
 
 cudaError_t cudaMallocMaybeCapturing(void** p, size_t size) {
-#if defined(CUDA_VERSION) && CUDA_VERSION >= 11000
+  printf("File: %s, Line: %d Function: %s\n", __FILE__, __LINE__, __FUNCTION__);
   if (at::cuda::currentStreamCaptureStatusMayInitCtx() ==
       at::cuda::CaptureStatus::None) {
-#endif
-    return C10_CUDA_ERROR_HANDLED(cudaMalloc(p, size));
-#if defined(CUDA_VERSION) && CUDA_VERSION >= 11000
+    cudaMalloc(p, size);
   } else {
     // It's ok to capture cudaMallocs, as long as we never cudaFree those
     // addresses before replay.
     // Capturing cudaMalloc behaves nicely: it gives the graph new VA,
     // but is ignored (won't leakily allocate new memory) in replays.
     at::cuda::CUDAStreamCaptureModeGuard g{cudaStreamCaptureModeRelaxed};
-    return C10_CUDA_ERROR_HANDLED(cudaMalloc(p, size));
+    cudaMalloc(p, size);
   }
-#endif
+  printf("p = %p\n", *p);
+  return cudaGetLastError();
 }
 
 } // anonymous namespace
@@ -2128,6 +2127,7 @@ class NativeCachingAllocator : public CUDAAllocator {
     return result;
   }
   DataPtr allocate(size_t size) const override {
+    printf("File: %s, Line: %d Function: %s\n", __FILE__, __LINE__, __FUNCTION__);
     constexpr size_t one_exa_bytes = 1152921504606846976ULL;
     TORCH_CHECK_WITH(
         OutOfMemoryError,
@@ -2140,6 +2140,7 @@ class NativeCachingAllocator : public CUDAAllocator {
       // Deliberately don't use cudaMallocMaybeCapturing here, to force an error
       // if someone tries to use forceUncachedAllocator while capturing.
       C10_CUDA_CHECK(cudaMalloc(&r, size));
+      printf("ForceUncachedAllocator r: %p\n", r);
       const c10::impl::PyInterpreter* interp = c10::impl::GPUTrace::get_trace();
       if (C10_UNLIKELY(interp)) {
         (*interp)->trace_gpu_memory_allocation(reinterpret_cast<uintptr_t>(r));
@@ -2150,6 +2151,7 @@ class NativeCachingAllocator : public CUDAAllocator {
       // Allocator declars allocate const!?
       const_cast<NativeCachingAllocator*>(this)->malloc(
           &r, device, size, cuda::getCurrentCUDAStream(device));
+      printf("Non ForceUncachedAllocator r: %p\n", r);
     }
     return {r, r, &local_raw_delete, Device(DeviceType::CUDA, device)};
   }

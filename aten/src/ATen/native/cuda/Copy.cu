@@ -248,6 +248,10 @@ static void copy_kernel_cuda(TensorIterator& iter, bool non_blocking) {
   int64_t nbytes = iter.numel() * iter.element_size(0);
   CUDAStream stream = getCurrentCUDAStream();
 
+  printf("File: %s Line: %d Function: %s\n", __FILE__, __LINE__, __FUNCTION__);
+  printf("dst: %p src: %p nbytes: %ld\n", dst, src, nbytes);
+  printf("Non_blocking: %d\n", non_blocking);
+
   if (non_blocking) {
     AT_CUDA_CHECK(cudaMemcpyAsync(dst, src, nbytes, kind, stream));
     // we use both the storage context and the tensor data pointer as the key

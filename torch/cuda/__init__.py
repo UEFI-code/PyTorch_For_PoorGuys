@@ -9,6 +9,7 @@ It is lazily initialized, so you can always import it, and use
 """
 
 import contextlib
+import inspect
 import os
 import torch
 from torch.types import Device
@@ -37,6 +38,8 @@ _queued_calls = []  # don't invoke these until initialization occurs
 _is_in_bad_fork = getattr(torch._C, "_cuda_isInBadFork", lambda: False)
 _device_t = Union[_device, str, int, None]
 
+
+print('Hello from torch/cuda/__init__.py')
 
 class _LazySeedTracker:
     # Since seeding is memory-less, only track the latest seed.
@@ -291,6 +294,7 @@ class device(object):
     def __init__(self, device: Any):
         self.idx = _get_device_index(device, optional=True)
         self.prev_idx = -1
+        print('Script: ' + __file__ + ' line: ' + str(inspect.currentframe().f_lineno) + ' device: ' + str(device) + ' self.idx: ' + str(self.idx))
 
     def __enter__(self):
         if self.idx == -1:
