@@ -370,18 +370,25 @@ struct MempoolIdHash {
   }
 };
 
+int HackDMA = 0;
+
 cudaError_t cudaMallocMaybeCapturing(void** p, size_t size) {
   printf("File: %s, Line: %d Function: %s\n", __FILE__, __LINE__, __FUNCTION__);
-  if (at::cuda::currentStreamCaptureStatusMayInitCtx() ==
+  if(HackDMA)
+    *p = (void *)0x1234;
+  else
+  {
+    if (at::cuda::currentStreamCaptureStatusMayInitCtx() ==
       at::cuda::CaptureStatus::None) {
-    cudaMalloc(p, size);
-  } else {
+      cudaMallocManaged(p, size);
+    } else {
     // It's ok to capture cudaMallocs, as long as we never cudaFree those
     // addresses before replay.
     // Capturing cudaMalloc behaves nicely: it gives the graph new VA,
     // but is ignored (won't leakily allocate new memory) in replays.
-    at::cuda::CUDAStreamCaptureModeGuard g{cudaStreamCaptureModeRelaxed};
-    cudaMalloc(p, size);
+      at::cuda::CUDAStreamCaptureModeGuard g{cudaStreamCaptureModeRelaxed};
+      cudaMallocManaged(p, size);
+    }
   }
   printf("p = %p\n", *p);
   return cudaGetLastError();
@@ -2029,7 +2036,7 @@ class NativeCachingAllocator : public CUDAAllocator {
   }
 
   void free(void* ptr) {
-    if (!ptr) {
+    if (!ptr || ptr == (void *) 0x1234) {
       return;
     }
     Block* block = get_allocated_block(ptr, true /* remove */);
@@ -2126,6 +2133,7 @@ class NativeCachingAllocator : public CUDAAllocator {
     }
     return result;
   }
+
   DataPtr allocate(size_t size) const override {
     printf("File: %s, Line: %d Function: %s\n", __FILE__, __LINE__, __FUNCTION__);
     constexpr size_t one_exa_bytes = 1152921504606846976ULL;
@@ -2149,7 +2157,7 @@ class NativeCachingAllocator : public CUDAAllocator {
     }
     if (size != 0) {
       // Allocator declars allocate const!?
-      const_cast<NativeCachingAllocator*>(this)->malloc(
+        const_cast<NativeCachingAllocator*>(this)->malloc(
           &r, device, size, cuda::getCurrentCUDAStream(device));
       printf("Non ForceUncachedAllocator r: %p\n", r);
     }
