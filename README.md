@@ -1,3 +1,13 @@
+# PyTorch For Poor Guys
+
+Don't Use It (Now) If You Are Rich!
+
+This is a speical Hack version of PyTorch, which is for Poor Guys Who CANNOT afford an expensive Big GPU, but want to research Large Model...
+
+This version will give you a BAD performance, so use the origal PyTorch as much as possible. Unless you met VRAM boom!
+
+To use this version, you also need to purchase big RAM (Which is much cheaper than Graphic Card).
+
 ![PyTorch Logo](https://github.com/pytorch/pytorch/blob/master/docs/source/_static/img/pytorch-logo-dark.png)
 
 --------------------------------------------------------------------------------

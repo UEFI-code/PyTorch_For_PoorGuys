@@ -371,8 +371,8 @@ struct MempoolIdHash {
 };
 
 cudaError_t cudaMallocMaybeCapturing(void** p, size_t size) {
-  printf("File: %s, Line: %d Function: %s\n", __FILE__, __LINE__, __FUNCTION__);
-  printf("Malloc size = %lu\n", size);
+  // printf("File: %s, Line: %d Function: %s\n", __FILE__, __LINE__, __FUNCTION__);
+  // printf("Malloc size = %lu\n", size);
     if (at::cuda::currentStreamCaptureStatusMayInitCtx() ==
       at::cuda::CaptureStatus::None) {
       cudaMallocManaged(p, size);
@@ -2128,7 +2128,7 @@ class NativeCachingAllocator : public CUDAAllocator {
     return result;
   }
   DataPtr allocate(size_t size) const override {
-    printf("File: %s, Line: %d Function: %s\n", __FILE__, __LINE__, __FUNCTION__);
+    //printf("File: %s, Line: %d Function: %s\n", __FILE__, __LINE__, __FUNCTION__);
     constexpr size_t one_exa_bytes = 1152921504606846976ULL;
     TORCH_CHECK_WITH(
         OutOfMemoryError,
@@ -2152,7 +2152,7 @@ class NativeCachingAllocator : public CUDAAllocator {
       // Allocator declars allocate const!?
         const_cast<NativeCachingAllocator*>(this)->malloc(
           &r, device, size, cuda::getCurrentCUDAStream(device));
-      printf("Non ForceUncachedAllocator r: %p\n", r);
+      //printf("Non ForceUncachedAllocator r: %p\n", r);
     }
     return {r, r, &local_raw_delete, Device(DeviceType::CUDA, device)};
   }
