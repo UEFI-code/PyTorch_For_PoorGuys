@@ -370,14 +370,9 @@ struct MempoolIdHash {
   }
 };
 
-int HackDMA = 0;
-
 cudaError_t cudaMallocMaybeCapturing(void** p, size_t size) {
   printf("File: %s, Line: %d Function: %s\n", __FILE__, __LINE__, __FUNCTION__);
-  if(HackDMA)
-    *p = (void *)0x1234;
-  else
-  {
+  printf("Malloc size = %lu\n", size);
     if (at::cuda::currentStreamCaptureStatusMayInitCtx() ==
       at::cuda::CaptureStatus::None) {
       cudaMallocManaged(p, size);
@@ -389,7 +384,6 @@ cudaError_t cudaMallocMaybeCapturing(void** p, size_t size) {
       at::cuda::CUDAStreamCaptureModeGuard g{cudaStreamCaptureModeRelaxed};
       cudaMallocManaged(p, size);
     }
-  }
   printf("p = %p\n", *p);
   return cudaGetLastError();
 }
@@ -2133,7 +2127,6 @@ class NativeCachingAllocator : public CUDAAllocator {
     }
     return result;
   }
-
   DataPtr allocate(size_t size) const override {
     printf("File: %s, Line: %d Function: %s\n", __FILE__, __LINE__, __FUNCTION__);
     constexpr size_t one_exa_bytes = 1152921504606846976ULL;
