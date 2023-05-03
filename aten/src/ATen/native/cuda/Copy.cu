@@ -248,9 +248,9 @@ static void copy_kernel_cuda(TensorIterator& iter, bool non_blocking) {
   int64_t nbytes = iter.numel() * iter.element_size(0);
   CUDAStream stream = getCurrentCUDAStream();
 
-  // printf("File: %s Line: %d Function: %s\n", __FILE__, __LINE__, __FUNCTION__);
-  // printf("dst: %p src: %p nbytes: %ld\n", dst, src, nbytes);
-  // printf("Non_blocking: %d\n", non_blocking);
+ //printf("File: %s Line: %d Function: %s\n", __FILE__, __LINE__, __FUNCTION__);
+ //printf("dst: %p src: %p nbytes: %ld\n", dst, src, nbytes);
+ //printf("Non_blocking: %d\n", non_blocking);
 
   if(dst <= (void *)0xffff)
   {
@@ -290,6 +290,7 @@ static void copy_kernel_cuda(TensorIterator& iter, bool non_blocking) {
 
   } else {
     at::cuda::memcpy_and_sync(dst, src, nbytes, kind, stream);
+    //cudaMemcpy(dst, src, nbytes, kind);
   }
 
   if (iter.tensor(0).is_conj() != iter.tensor(1).is_conj()) {
@@ -298,6 +299,8 @@ static void copy_kernel_cuda(TensorIterator& iter, bool non_blocking) {
   if (iter.tensor(0).is_neg() != iter.tensor(1).is_neg()) {
      iter.tensor(0).neg_();
   }
+
+  //printf("Funtion %s return\n", __FUNCTION__);
 }
 
 REGISTER_DISPATCH(copy_stub, &copy_kernel_cuda);
