@@ -370,21 +370,47 @@ struct MempoolIdHash {
   }
 };
 
+void hackCUDAMalloc(void **p, size_t size, size_t dev_free)
+{
+  *p = 0;
+  if(dev_free > size)
+  {
+    printf("Will be malloc on Grapic Card\n");
+    cudaMalloc(p, size);
+    if(*p == 0)
+    {
+      printf("Malloc on Grapic Card failed, try cudaMallocManaged\n");
+      cudaMallocManaged(p, size);
+      assert(*p != 0);
+    }
+  }
+  else
+  {
+    printf("Will be malloc on CPU\n");
+    cudaMallocManaged(p, size);
+    assert(*p != 0);
+  }
+}
+
 cudaError_t cudaMallocMaybeCapturing(void** p, size_t size) {
-  // printf("File: %s, Line: %d Function: %s\n", __FILE__, __LINE__, __FUNCTION__);
-  // printf("Malloc size = %lu\n", size);
+  printf("File: %s, Line: %d Function: %s\n", __FILE__, __LINE__, __FUNCTION__);
+  printf("Malloc size = %lu\n", size);
+  size_t dev_free = 0, dev_total = 0;
+  cudaMemGetInfo(&dev_free, &dev_total);
+  //dev_free = 20971520; // For test
+  //printf("dev_free = %lu, dev_total = %lu\n", dev_free, dev_total);
     if (at::cuda::currentStreamCaptureStatusMayInitCtx() ==
       at::cuda::CaptureStatus::None) {
-      cudaMallocManaged(p, size);
+      hackCUDAMalloc(p, size, dev_free);
     } else {
     // It's ok to capture cudaMallocs, as long as we never cudaFree those
     // addresses before replay.
     // Capturing cudaMalloc behaves nicely: it gives the graph new VA,
     // but is ignored (won't leakily allocate new memory) in replays.
       at::cuda::CUDAStreamCaptureModeGuard g{cudaStreamCaptureModeRelaxed};
-      cudaMallocManaged(p, size);
+      hackCUDAMalloc(p, size, dev_free);
     }
-  printf("p = %p\n", *p);
+  //printf("p = %p\n", *p);
   return cudaGetLastError();
 }
 

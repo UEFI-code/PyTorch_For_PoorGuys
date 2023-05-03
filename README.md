@@ -4,7 +4,9 @@ Don't Use It (Now) If You Are Rich!
 
 This is a speical Hack version of PyTorch, which is for Poor Guys Who CANNOT afford an expensive Big GPU, but want to research Large Model...
 
-This version will give you a BAD performance, so use the origal PyTorch as much as possible. Unless you met VRAM boom!
+This version will allocate buffers on Grapic Card VRAM as much as possible, if there is no place on VRAM, we will try to allocate on Host RAM and let GPU access it via DMA.
+
+This version will give you a BAD performance when it making GPU though DMA.
 
 To use this version, you also need to purchase big RAM (Which is much cheaper than Graphic Card).
 
