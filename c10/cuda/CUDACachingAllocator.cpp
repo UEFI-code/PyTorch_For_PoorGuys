@@ -372,8 +372,11 @@ struct MempoolIdHash {
 
 void hackCUDAMalloc(void **p, size_t size, size_t dev_free)
 {
+  static std::mutex mutex;
+  mutex.lock();
   *p = 0;
-  if(dev_free > size + 512 * 1024 * 1024)
+  printf("Dev free %.1f MB\n", (float)dev_free/1024/1024);
+  if(dev_free > size + 1024 * 1024 * 1024)
   {
     printf("Will be malloc on Grapic Card %.1f MB\n", (float)size/1024/1024);
     cudaMalloc(p, size);
@@ -387,15 +390,16 @@ void hackCUDAMalloc(void **p, size_t size, size_t dev_free)
   else
   {
     printf("Will be malloc on CPU %.1f MB\n", (float)size/1024/1024);
-    cudaMallocManaged(p, size);
+    cudaHostAlloc(p, size, cudaHostAllocDefault);
     assert(*p != 0);
   }
   //printf("*p = %p\n", *p);
+  mutex.unlock();
 }
 
 cudaError_t cudaMallocMaybeCapturing(void** p, size_t size) {
-  static std::mutex mutex;
-  mutex.lock();
+  // static std::mutex mutex;
+  // mutex.lock();
   //printf("File: %s, Line: %d Function: %s\n", __FILE__, __LINE__, __FUNCTION__);
   //printf("Malloc size = %lu\n", size);
   
@@ -415,7 +419,7 @@ cudaError_t cudaMallocMaybeCapturing(void** p, size_t size) {
       hackCUDAMalloc(p, size, dev_free);
     }
   printf("GPU access pointer = %p\n", *p);
-  mutex.unlock();
+  // mutex.unlock();
   return cudaGetLastError();
 }
 
