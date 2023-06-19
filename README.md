@@ -131,7 +131,7 @@ such as [Intel MKL](https://software.intel.com/mkl) and NVIDIA ([cuDNN](https://
 At the core, its CPU and GPU Tensor and neural network backends
 are mature and have been tested for years.
 
-Hence, PyTorch is quite fast â€“ whether you run small or large neural networks.
+Hence, PyTorch is quite fast â€? whether you run small or large neural networks.
 
 The memory usage in PyTorch is extremely efficient compared to Torch or some of the alternatives.
 We've written custom memory allocators for the GPU to make sure that
@@ -444,7 +444,7 @@ To learn more about making a contribution to Pytorch, please see our [Contributi
 
 ## The Team
 
-PyTorch_For_PoorGuys is a Hack version of PyTorch and now maintained by [UEFI-code](https://github.com/UEFI-code).
+PyTorch_For_PoorGuys is a Hack version of PyTorch and now maintained by [ShizhuoZhang(UEFI-code)](https://github.com/UEFI-code).
 
 PyTorch is a community-driven project with several skillful engineers and researchers contributing to it.
 
