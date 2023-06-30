@@ -22,6 +22,12 @@
 #include <utility>
 #include <vector>
 
+#define DbgLogSwitch 1
+#define DbgPrintf(...) \
+if (DbgLogSwitch) { \
+  printf(__VA_ARGS__); \
+}
+
 namespace c10 {
 
 C10_DEFINE_REGISTRY(FreeCudaMemoryCallbacksRegistry, FreeMemoryCallback);
@@ -375,38 +381,38 @@ void hackCUDAMalloc(void **p, size_t size, size_t dev_free)
   static std::mutex mutex;
   mutex.lock();
   *p = 0;
-  printf("Dev free %.1f MB\n", (float)dev_free/1024/1024);
+  DbgPrintf("Dev free %.1f MB\n", (float)dev_free/1024/1024);
   if(dev_free > size + 1024 * 1024 * 1024)
   {
-    printf("Will be malloc on Grapic Card %.1f MB\n", (float)size/1024/1024);
+    DbgPrintf("Will be malloc on Grapic Card %.1f MB\n", (float)size/1024/1024);
     cudaMalloc(p, size);
     if(*p == 0)
     {
-      printf("Malloc on Grapic Card failed, try cudaMallocManaged\n");
+      DbgPrintf("Malloc on Grapic Card failed, try cudaMallocManaged\n");
       cudaMallocManaged(p, size);
       assert(*p != 0);
     }
   }
   else
   {
-    printf("Will be malloc on CPU %.1f MB\n", (float)size/1024/1024);
+    DbgPrintf("Will be malloc on CPU %.1f MB\n", (float)size/1024/1024);
     cudaHostAlloc(p, size, cudaHostAllocDefault);
     assert(*p != 0);
   }
-  //printf("*p = %p\n", *p);
+  //DbgPrintf("*p = %p\n", *p);
   mutex.unlock();
 }
 
 cudaError_t cudaMallocMaybeCapturing(void** p, size_t size) {
   // static std::mutex mutex;
   // mutex.lock();
-  //printf("File: %s, Line: %d Function: %s\n", __FILE__, __LINE__, __FUNCTION__);
-  //printf("Malloc size = %lu\n", size);
+  //DbgPrintf("File: %s, Line: %d Function: %s\n", __FILE__, __LINE__, __FUNCTION__);
+  //DbgPrintf("Malloc size = %lu\n", size);
   
   size_t dev_free = 0, dev_total = 0;
   cudaMemGetInfo(&dev_free, &dev_total);
   //dev_free = 20971520; // For test
-  //printf("dev_free = %lu, dev_total = %lu\n", dev_free, dev_total);
+  //DbgPrintf("dev_free = %lu, dev_total = %lu\n", dev_free, dev_total);
     if (at::cuda::currentStreamCaptureStatusMayInitCtx() ==
       at::cuda::CaptureStatus::None) {
       hackCUDAMalloc(p, size, dev_free);
@@ -418,7 +424,7 @@ cudaError_t cudaMallocMaybeCapturing(void** p, size_t size) {
       at::cuda::CUDAStreamCaptureModeGuard g{cudaStreamCaptureModeRelaxed};
       hackCUDAMalloc(p, size, dev_free);
     }
-  printf("GPU access pointer = %p\n", *p);
+  DbgPrintf("GPU access pointer = %p\n", *p);
   // mutex.unlock();
   return cudaGetLastError();
 }
@@ -2163,7 +2169,7 @@ class NativeCachingAllocator : public CUDAAllocator {
     return result;
   }
   DataPtr allocate(size_t size) const override {
-    //printf("File: %s, Line: %d Function: %s\n", __FILE__, __LINE__, __FUNCTION__);
+    //DbgPrintf("File: %s, Line: %d Function: %s\n", __FILE__, __LINE__, __FUNCTION__);
     constexpr size_t one_exa_bytes = 1152921504606846976ULL;
     TORCH_CHECK_WITH(
         OutOfMemoryError,
@@ -2176,7 +2182,7 @@ class NativeCachingAllocator : public CUDAAllocator {
       // Deliberately don't use cudaMallocMaybeCapturing here, to force an error
       // if someone tries to use forceUncachedAllocator while capturing.
       C10_CUDA_CHECK(cudaMalloc(&r, size));
-      printf("ForceUncachedAllocator r: %p\n", r);
+      DbgPrintf("ForceUncachedAllocator r: %p\n", r);
       const c10::impl::PyInterpreter* interp = c10::impl::GPUTrace::get_trace();
       if (C10_UNLIKELY(interp)) {
         (*interp)->trace_gpu_memory_allocation(reinterpret_cast<uintptr_t>(r));
@@ -2187,7 +2193,7 @@ class NativeCachingAllocator : public CUDAAllocator {
       // Allocator declars allocate const!?
         const_cast<NativeCachingAllocator*>(this)->malloc(
           &r, device, size, cuda::getCurrentCUDAStream(device));
-      //printf("Non ForceUncachedAllocator r: %p\n", r);
+      //DbgPrintf("Non ForceUncachedAllocator r: %p\n", r);
     }
     return {r, r, &local_raw_delete, Device(DeviceType::CUDA, device)};
   }

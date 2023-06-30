@@ -39,7 +39,7 @@ _is_in_bad_fork = getattr(torch._C, "_cuda_isInBadFork", lambda: False)
 _device_t = Union[_device, str, int, None]
 
 
-print('Hello from torch/cuda/__init__.py')
+#print('Hello from torch/cuda/__init__.py')
 
 class _LazySeedTracker:
     # Since seeding is memory-less, only track the latest seed.
@@ -294,7 +294,7 @@ class device(object):
     def __init__(self, device: Any):
         self.idx = _get_device_index(device, optional=True)
         self.prev_idx = -1
-        print('Script: ' + __file__ + ' line: ' + str(inspect.currentframe().f_lineno) + ' device: ' + str(device) + ' self.idx: ' + str(self.idx))
+        #print('Script: ' + __file__ + ' line: ' + str(inspect.currentframe().f_lineno) + ' device: ' + str(device) + ' self.idx: ' + str(self.idx))
 
     def __enter__(self):
         if self.idx == -1:
