@@ -252,21 +252,6 @@ static void copy_kernel_cuda(TensorIterator& iter, bool non_blocking) {
  //printf("dst: %p src: %p nbytes: %ld\n", dst, src, nbytes);
  //printf("Non_blocking: %d\n", non_blocking);
 
-  if(dst <= (void *)0xffff)
-  {
-    printf("Captured DMA Hack!\n");
-    cudaHostRegister(src, nbytes, cudaHostRegisterMapped);
-    cudaHostGetDevicePointer(&dst, src, 0);
-    printf("Got device pointer: %p\n", dst);
-    if(dst == 0)
-    {
-      printf("Failed to get device pointer!\n");
-      exit(1);
-    }
-    iter.unsafe_replace_operand(0, dst);
-    return;
-  }
-  
   if (non_blocking) {
     AT_CUDA_CHECK(cudaMemcpyAsync(dst, src, nbytes, kind, stream));
     // we use both the storage context and the tensor data pointer as the key
