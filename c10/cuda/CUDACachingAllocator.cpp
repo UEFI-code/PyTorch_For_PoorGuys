@@ -376,12 +376,17 @@ struct MempoolIdHash {
   }
 };
 
-void hackCUDAMalloc(void **p, size_t size, size_t dev_free)
+void hackCUDAMalloc(void **p, size_t size)
 {
   static std::mutex mutex;
   mutex.lock();
-  *p = 0;
+
+  size_t dev_free = 0, dev_total = 0;
+  cudaMemGetInfo(&dev_free, &dev_total);
   DbgPrintf("Dev free %.1f MB\n", (float)dev_free/1024/1024);
+
+  *p = 0;
+  
   if(dev_free > size + 1024 * 1024 * 1024)
   {
     DbgPrintf("Will be malloc on Grapic Card %.1f MB\n", (float)size/1024/1024);
@@ -399,30 +404,23 @@ void hackCUDAMalloc(void **p, size_t size, size_t dev_free)
     cudaHostAlloc(p, size, cudaHostAllocDefault);
     assert(*p != 0);
   }
-  //DbgPrintf("*p = %p\n", *p);
+
   mutex.unlock();
 }
 
 cudaError_t cudaMallocMaybeCapturing(void** p, size_t size) {
-  // static std::mutex mutex;
-  // mutex.lock();
-  //DbgPrintf("File: %s, Line: %d Function: %s\n", __FILE__, __LINE__, __FUNCTION__);
-  //DbgPrintf("Malloc size = %lu\n", size);
-  
-  size_t dev_free = 0, dev_total = 0;
-  cudaMemGetInfo(&dev_free, &dev_total);
-  //dev_free = 20971520; // For test
-  //DbgPrintf("dev_free = %lu, dev_total = %lu\n", dev_free, dev_total);
+    //DbgPrintf("File: %s, Line: %d Function: %s\n", __FILE__, __LINE__, __FUNCTION__);
+    //DbgPrintf("Malloc size = %lu\n", size);
     if (at::cuda::currentStreamCaptureStatusMayInitCtx() ==
       at::cuda::CaptureStatus::None) {
-      hackCUDAMalloc(p, size, dev_free);
+      hackCUDAMalloc(p, size);
     } else {
     // It's ok to capture cudaMallocs, as long as we never cudaFree those
     // addresses before replay.
     // Capturing cudaMalloc behaves nicely: it gives the graph new VA,
     // but is ignored (won't leakily allocate new memory) in replays.
       at::cuda::CUDAStreamCaptureModeGuard g{cudaStreamCaptureModeRelaxed};
-      hackCUDAMalloc(p, size, dev_free);
+      hackCUDAMalloc(p, size);
     }
   DbgPrintf("GPU access pointer = %p\n", *p);
   // mutex.unlock();
