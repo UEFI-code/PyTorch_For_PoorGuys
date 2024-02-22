@@ -204,7 +204,7 @@ conda install astunparse numpy ninja pyyaml setuptools cmake cffi typing_extensi
 ```bash
 conda install mkl mkl-include
 # CUDA only: Add LAPACK support for the GPU if needed
-conda install -c pytorch magma-cuda110  # or the magma-cuda* that matches your CUDA version from https://anaconda.org/pytorch/repo
+conda install -c pytorch magma-cuda118  # or the magma-cuda* that matches your CUDA version from https://anaconda.org/pytorch/repo
 ```
 
 **On MacOS**
