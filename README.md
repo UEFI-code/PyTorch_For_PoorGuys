@@ -10,6 +10,8 @@ This version will give you a BAD performance when it making GPU though DMA.
 
 To use this version, you also need to purchase big RAM (Which is much cheaper than Graphic Card).
 
+Currently only support CUDA, and only tested on Ubuntu 22.04 with CUDA 11.8. Other Debian-based Linux may also work, try it yourself!
+
 ![PyTorch Logo](https://github.com/pytorch/pytorch/blob/master/docs/source/_static/img/pytorch-logo-dark.png)
 
 --------------------------------------------------------------------------------
@@ -173,7 +175,7 @@ If you are installing from source, you will need:
 We highly recommend installing an [Anaconda](https://www.anaconda.com/distribution/#download-section) environment. You will get a high-quality BLAS library (MKL) and you get controlled dependency versions regardless of your Linux distro.
 
 If you want to compile with CUDA support, install the following (note that CUDA is not supported on macOS)
-- [NVIDIA CUDA](https://developer.nvidia.com/cuda-downloads) 10.2 or above
+- [NVIDIA CUDA](https://developer.nvidia.com/cuda-downloads) 11.8 or above
 - [NVIDIA cuDNN](https://developer.nvidia.com/cudnn) v7 or above
 - [Compiler](https://gist.github.com/ax3l/9489132) compatible with CUDA
 
@@ -234,19 +236,19 @@ git submodule sync
 git submodule update --init --recursive
 ```
 
-#### Install PyTorch
+#### Build PyTorch
 **On Linux**
+
+Try this version of code if you are using CUDA:
+```bash
+export CMAKE_PREFIX_PATH=${CONDA_PREFIX:-"$(dirname $(which conda))/../"}
+python setup.py develop
+```
 
 If you're compiling for AMD ROCm then first run this command:
 ```bash
 # Only run this if you're compiling for ROCm
 python tools/amd_build/build_amd.py
-```
-
-Install PyTorch
-```bash
-export CMAKE_PREFIX_PATH=${CONDA_PREFIX:-"$(dirname $(which conda))/../"}
-python setup.py develop
 ```
 
 Note that if you are using [Anaconda](https://www.anaconda.com/distribution/#download-section), you may experience an error caused by the linker:
@@ -277,7 +279,7 @@ come with Visual Studio Code by default.
 
 If you want to build legacy python code, please refer to [Building on legacy code and CUDA](https://github.com/pytorch/pytorch/blob/master/CONTRIBUTING.md#building-on-legacy-code-and-cuda)
 
-**CPU-only builds**
+**CPU-only tries**
 
 In this mode PyTorch computations will run on your CPU, not your GPU
 
@@ -412,6 +414,11 @@ Three-pointers to get you started:
 
 ## Resources
 
+* [Related Bachelor Graduate Design](https://github.com/UEFI-code/BachelorGraduationDesign)
+* [Authors' GitHub](https://github.com/UEFI-code)
+
+Below are original PyTorch resources:
+
 * [PyTorch.org](https://pytorch.org/)
 * [PyTorch Tutorials](https://pytorch.org/tutorials/)
 * [PyTorch Examples](https://github.com/pytorch/examples)
@@ -432,8 +439,6 @@ Three-pointers to get you started:
 * For brand guidelines, please visit our website at [pytorch.org](https://pytorch.org/)
 
 ## Releases and Contributing
-
-PyTorch has a 90-day release cycle (major releases). Please let us know if you encounter a bug by [filing an issue](https://github.com/pytorch/pytorch/issues).
 
 We appreciate all contributions. If you are planning to contribute back bug-fixes, please do so without any further discussion.
 
