@@ -211,7 +211,7 @@ conda install -c pytorch magma-cuda118  # or the magma-cuda* that matches your C
 
 **On MacOS**
 
-Currently, it is meaningless to install this Poor Guys version on MacOS, because CUDA not supported on MacOS.
+Currently, it is meaningless to install this Poor Guys version on MacOS, because CUDA not supported on MacOS. However, if you managed to hack the CUDA on MacOS, you can try the following:
 
 ```bash
 # Add this package on intel x86 processor machines only
