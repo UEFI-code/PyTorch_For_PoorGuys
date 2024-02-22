@@ -10,7 +10,7 @@ So it will give you a BAD performance when it making GPU access Host RAM though 
 
 To use this version, you also need to purchase big RAM (Which is much cheaper than Graphic Card).
 
-Currently only support CUDA, and only tested on Ubuntu 22.04 with CUDA 11.8. Other Debian-based Linux may also work, try it yourself!
+Currently only support CUDA, and only tested on Ubuntu 22.04 x86_64 with CUDA 11.8. Other Debian-based Linux may also work, try it yourself!
 
 Sugesstion Hardware:
 - CPU: Intel Xeon E5-2680 v4 (14 Cores, 28 Threads, 2.4GHz, Less than 10$ USD per chip, you can purchase 2 chips and use them on a dual-socket motherboard)
