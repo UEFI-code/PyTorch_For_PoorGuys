@@ -12,6 +12,20 @@ To use this version, you also need to purchase big RAM (Which is much cheaper th
 
 Currently only support CUDA, and only tested on Ubuntu 22.04 with CUDA 11.8. Other Debian-based Linux may also work, try it yourself!
 
+Sugesstion Hardware:
+- CPU: Intel Xeon E5-2680 v4 (14 Cores, 28 Threads, 2.4GHz, Less than 10$ USD per chip, you can purchase 2 chips and use them on a dual-socket motherboard)
+- RAM: 32GB DDR4 2133MHz * 8 (256GB, Less than 200$ USD)
+- Disk: 1TB NVMe SSD, Less than 150$ USD
+- Graphic Card: NVIDIA GeForce GTX 1080 Ti (11GB VRAM, Less than 200$ USD)
+- Motherboard: Design it yourself if you are expert on hardware hacking, or purchase it less then 150$ USD
+- Power Supply: 1000W, Less than 100$ USD
+- Case: Design it yourself if you are expert on hardware hacking, or just put ALL parts on your desk, less than 50$ USD
+- Monitor: random one (Less than 10$), or borrow it from your friend, just use it one time to setup network and SSH
+
+Total Cost: 20$ + 200$ + 150$ + 200$ + 150$ + 100$ + 50$ + 10$ = 880$ USD
+
+Cheaper than Purchase an iPhone 15 Pro!
+
 ![PyTorch Logo](https://github.com/pytorch/pytorch/blob/master/docs/source/_static/img/pytorch-logo-dark.png)
 
 --------------------------------------------------------------------------------
@@ -155,10 +169,11 @@ No wrapper code needs to be written. You can see [a tutorial here](https://pytor
 ## Installation
 
 ### Binaries
-Commands to install binaries via Conda or pip wheels are on our website: [https://pytorch.org/get-started/locally/](https://pytorch.org/get-started/locally/)
-
+Check on this repo "Releases" section for the latest release of PyTorch_For_PoorGuys wheels installer file.
 
 #### NVIDIA Jetson Platforms
+
+I think it is meaningless to install this Poor Guys version on Jetson Platforms, because Jetson have a fusion Memory, which the Original PyTorch can use it to allocate buffers on Host RAM and let GPU access it via DMA.
 
 Python wheels for NVIDIA's Jetson Nano, Jetson TX1/TX2, Jetson Xavier NX/AGX, and Jetson AGX Orin are provided [here](https://forums.developer.nvidia.com/t/pytorch-for-jetson-version-1-10-now-available/72048) and the L4T container is published [here](https://catalog.ngc.nvidia.com/orgs/nvidia/containers/l4t-pytorch)
 
