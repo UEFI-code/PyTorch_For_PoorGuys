@@ -211,6 +211,8 @@ conda install -c pytorch magma-cuda118  # or the magma-cuda* that matches your C
 
 **On MacOS**
 
+Currently, it is meaningless to install this Poor Guys version on MacOS, because CUDA not supported on MacOS.
+
 ```bash
 # Add this package on intel x86 processor machines only
 conda install mkl mkl-include
@@ -219,6 +221,10 @@ conda install pkg-config libuv
 ```
 
 **On Windows**
+
+Well, try it if you have time, but I don't want try this Poor Guys version on Windows. 
+
+Windows itself is expensive!
 
 ```bash
 conda install mkl mkl-include
@@ -239,13 +245,21 @@ git submodule update --init --recursive
 #### Build PyTorch
 **On Linux**
 
-Try this version of code if you are using CUDA:
+To try this version of code if you are using CUDA:
 ```bash
 export CMAKE_PREFIX_PATH=${CONDA_PREFIX:-"$(dirname $(which conda))/../"}
 python setup.py develop
 ```
 
-If you're compiling for AMD ROCm then first run this command:
+To build a Linux pip wheel, run the following:
+```bash
+export CMAKE_PREFIX_PATH=${CONDA_PREFIX:-"$(dirname $(which conda))/../"}
+python setup.py bdist_wheel
+```
+
+And then the wheel file will be in the `dist` folder.
+
+If you're compiling for AMD ROCm, I think you should abort now. Currently, ROCm is not supported on this version of Poor Guys. But if you really want to try, you can run the following:
 ```bash
 # Only run this if you're compiling for ROCm
 python tools/amd_build/build_amd.py
@@ -263,12 +277,16 @@ This is caused by `ld` from the Conda environment shadowing the system `ld`. You
 
 **On macOS**
 
+It is meaningless to try this Poor Guys version on MacOS, because CUDA not supported on MacOS. However, if you managed to hack the CUDA on MacOS, you can try the following:
+
 ```bash
 export CMAKE_PREFIX_PATH=${CONDA_PREFIX:-"$(dirname $(which conda))/../"}
 MACOSX_DEPLOYMENT_TARGET=10.9 CC=clang CXX=clang++ python setup.py develop
 ```
 
 **On Windows**
+
+Well, try it if you have time, but I don't want try this Poor Guys version on Windows.
 
 Choose Correct Visual Studio Version.
 
